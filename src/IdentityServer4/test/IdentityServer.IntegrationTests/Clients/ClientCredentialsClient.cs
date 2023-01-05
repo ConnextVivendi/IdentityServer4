@@ -2,11 +2,14 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel;
@@ -17,6 +20,7 @@ using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace IdentityServer.IntegrationTests.Clients
 {
@@ -79,7 +83,7 @@ namespace IdentityServer.IntegrationTests.Clients
             
             payload["aud"].Should().Be("api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.First().ToString().Should().Be("api1");
         }
 
@@ -108,12 +112,12 @@ namespace IdentityServer.IntegrationTests.Clients
             payload.Keys.Should().Contain("jti");
             payload.Keys.Should().Contain("iat");
 
-            var audiences = ((JArray)payload["aud"]).Select(x => x.ToString());
+            var audiences = ((JsonArray)payload["aud"]).Select(x => x.ToString());
             audiences.Count().Should().Be(2);
             audiences.Should().Contain("api");
             audiences.Should().Contain("other_api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.First().ToString().Should().Be("api1");
         }
 
@@ -144,10 +148,10 @@ namespace IdentityServer.IntegrationTests.Clients
 
             payload["aud"].Should().Be("api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.First().ToString().Should().Be("api1");
 
-            var cnf = payload["cnf"] as JObject;
+            var cnf = payload["cnf"] as JsonObject;
             cnf["x5t#S256"].ToString().Should().Be("foo");
         }
 
@@ -178,7 +182,7 @@ namespace IdentityServer.IntegrationTests.Clients
             
             payload["aud"].Should().Be("api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.Count().Should().Be(2);
             scopes.First().ToString().Should().Be("api1");
             scopes.Skip(1).First().ToString().Should().Be("api2");
@@ -208,12 +212,12 @@ namespace IdentityServer.IntegrationTests.Clients
             payload.Keys.Should().Contain("jti");
             payload.Keys.Should().Contain("iat");
 
-            var audiences = ((JArray)payload["aud"]).Select(x => x.ToString());
+            var audiences = ((JsonArray)payload["aud"]).Select(x => x.ToString());
             audiences.Count().Should().Be(2);
             audiences.Should().Contain("api");
             audiences.Should().Contain("other_api");
 
-            var scopes = ((JArray)payload["scope"]).Select(x => x.ToString());
+            var scopes = ((JsonArray)payload["scope"]).Select(x => x.ToString());
             scopes.Count().Should().Be(3);
             scopes.Should().Contain("api1");
             scopes.Should().Contain("api2");
@@ -264,7 +268,7 @@ namespace IdentityServer.IntegrationTests.Clients
 
             payload["aud"].Should().Be("api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.First().ToString().Should().Be("api1");
         }
 
@@ -292,7 +296,7 @@ namespace IdentityServer.IntegrationTests.Clients
 
             payload["aud"].Should().Be("api");
 
-            var scopes = payload["scope"] as JArray;
+            var scopes = payload["scope"] as JsonArray;
             scopes.First().ToString().Should().Be("api1");
         }
 
@@ -450,10 +454,36 @@ namespace IdentityServer.IntegrationTests.Clients
         private Dictionary<string, object> GetPayload(TokenResponse response)
         {
             var token = response.AccessToken.Split('.').Skip(1).Take(1).First();
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(
-                Encoding.UTF8.GetString(Base64Url.Decode(token)));
-
-            return dictionary;
+            var jsonString = Encoding.UTF8.GetString(Base64Url.Decode(token));
+            var node = JsonObject.Parse(jsonString);
+            return node.AsObject().AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => GetValue(kvp.Value));
         }
+        
+        public static object GetValue(JsonNode jsonNode)
+        {
+            try
+            {
+                JsonValue jsonValue = jsonNode.AsValue();
+                if (jsonValue.TryGetValue(out long longValue)) return longValue;
+                if (jsonValue.TryGetValue(out bool boolValue)) return boolValue;
+                if (jsonValue.TryGetValue(out string stringValue)) return stringValue;
+            }
+            catch (InvalidOperationException) { }
+
+            try
+            {
+                return jsonNode.AsObject();
+            }
+            catch (InvalidOperationException) { }
+
+            try
+            {
+                return jsonNode.AsArray();
+            }
+            catch (InvalidOperationException) { }
+
+            return null;
+        }
+
     }
 }

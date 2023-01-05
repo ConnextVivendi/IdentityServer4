@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel;
@@ -62,7 +64,7 @@ namespace IdentityServer.IntegrationTests.Clients
             fields.TryGetValue("token_type", out temp).Should().BeTrue();
             fields.TryGetValue("expires_in", out temp).Should().BeTrue();
 
-            var responseObject = fields["dto"] as JObject;
+            var responseObject = fields["dto"] as JsonObject;
             responseObject.Should().NotBeNull();
 
             var responseDto = GetDto(responseObject);
@@ -127,7 +129,7 @@ namespace IdentityServer.IntegrationTests.Clients
             fields.TryGetValue("token_type", out temp).Should().BeFalse();
             fields.TryGetValue("expires_in", out temp).Should().BeFalse();
 
-            var responseObject = fields["dto"] as JObject;
+            var responseObject = fields["dto"] as JsonObject;
             responseObject.Should().NotBeNull();
 
             var responseDto = GetDto(responseObject);
@@ -181,7 +183,7 @@ namespace IdentityServer.IntegrationTests.Clients
             fields.TryGetValue("token_type", out temp).Should().BeTrue();
             fields.TryGetValue("expires_in", out temp).Should().BeTrue();
 
-            var responseObject = fields["dto"] as JObject;
+            var responseObject = fields["dto"] as JsonObject;
             responseObject.Should().NotBeNull();
 
             var responseDto = GetDto(responseObject);
@@ -252,7 +254,7 @@ namespace IdentityServer.IntegrationTests.Clients
             fields.TryGetValue("token_type", out temp).Should().BeFalse();
             fields.TryGetValue("expires_in", out temp).Should().BeFalse();
 
-            var responseObject = fields["dto"] as JObject;
+            var responseObject = fields["dto"] as JsonObject;
             responseObject.Should().NotBeNull();
 
             var responseDto = GetDto(responseObject);
@@ -274,22 +276,48 @@ namespace IdentityServer.IntegrationTests.Clients
             response.RefreshToken.Should().BeNull();
         }
 
-        private CustomResponseDto GetDto(JObject responseObject)
+        private CustomResponseDto GetDto(JsonObject responseObject)
         {
-            return responseObject.ToObject<CustomResponseDto>();
+            return responseObject.Deserialize<CustomResponseDto>();
         }
 
         private Dictionary<string, object> GetFields(TokenResponse response)
         {
-            return response.Json.ToObject<Dictionary<string, object>>();
+            var jObject = JsonObject.Create(response.Json);
+            return jObject!.AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => (object) GetValue(kvp.Value));
         }
 
+        public static object GetValue(JsonNode jsonNode)
+        {
+            try
+            {
+                JsonValue jsonValue = jsonNode.AsValue();
+                if (jsonValue.TryGetValue(out long longValue)) return longValue;
+                if (jsonValue.TryGetValue(out bool boolValue)) return boolValue;
+                if (jsonValue.TryGetValue(out string stringValue)) return stringValue;
+            }
+            catch (InvalidOperationException) { }
+
+            try
+            {
+                return jsonNode.AsObject();
+            }
+            catch (InvalidOperationException) { }
+
+            try
+            {
+                return jsonNode.AsArray();
+            }
+            catch (InvalidOperationException) { }
+
+            return null;
+        }
+        
         private Dictionary<string, object> GetPayload(TokenResponse response)
         {
             var token = response.AccessToken.Split('.').Skip(1).Take(1).First();
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(
                 Encoding.UTF8.GetString(Base64Url.Decode(token)));
-
             return dictionary;
         }
     }

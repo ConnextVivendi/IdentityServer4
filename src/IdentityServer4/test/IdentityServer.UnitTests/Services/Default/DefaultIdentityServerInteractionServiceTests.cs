@@ -110,14 +110,14 @@ namespace IdentityServer.UnitTests.Services.Default
         }
 
         [Fact]
-        public void GrantConsentAsync_should_throw_if_granted_and_no_subject()
+        public async Task GrantConsentAsync_should_throw_if_granted_and_no_subjectAsync()
         {
             Func<Task> act = () => _subject.GrantConsentAsync(
                 new AuthorizationRequest(), 
                 new ConsentResponse() { ScopesValuesConsented = new[] { "openid" } }, 
                 null);
 
-            act.Should().Throw<ArgumentNullException>()
+            (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.Message.Should().Contain("subject");
         }
 
@@ -137,7 +137,8 @@ namespace IdentityServer.UnitTests.Services.Default
         {
             _mockUserSession.User = new IdentityServerUser("bob").CreatePrincipal();
 
-            var req = new AuthorizationRequest() { 
+            var req = new AuthorizationRequest()
+            {
                 Client = new Client { ClientId = "client" },
                 ValidatedResources = _resourceValidationResult
             };

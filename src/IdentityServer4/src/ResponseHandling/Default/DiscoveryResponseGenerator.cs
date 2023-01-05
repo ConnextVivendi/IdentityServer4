@@ -334,7 +334,7 @@ namespace IdentityServer4.ResponseHandling
             }
 
             // custom entries
-            if (!Options.Discovery.CustomEntries.IsNullOrEmpty())
+            if (!IEnumerableExtensions.IsNullOrEmpty(Options.Discovery.CustomEntries))
             {
                 foreach ((string key, object value) in Options.Discovery.CustomEntries)
                 {

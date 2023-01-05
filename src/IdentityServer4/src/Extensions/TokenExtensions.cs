@@ -21,6 +21,10 @@ namespace IdentityServer4.Extensions
     /// </summary>
     public static class TokenExtensions
     {
+        static TokenExtensions()
+        {
+            JsonExtensions.Serializer = Newtonsoft.Json.JsonConvert.SerializeObject;
+        }
         /// <summary>
         /// Creates the default JWT payload.
         /// </summary>
@@ -32,7 +36,7 @@ namespace IdentityServer4.Extensions
         /// <exception cref="Exception">
         /// </exception>
         public static JwtPayload CreateJwtPayload(this Token token, ISystemClock clock, IdentityServerOptions options, ILogger logger)
-        {
+        {//https://github.com/cnblogs/IdentityServer4/pull/1/commits/0a7997d00105fd0ba7bca87ed1994d26eb99994e
             var payload = new JwtPayload(
                 token.Issuer,
                 null,

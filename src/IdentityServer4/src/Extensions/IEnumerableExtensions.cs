@@ -16,17 +16,7 @@ namespace IdentityServer4.Extensions
         [DebuggerStepThrough]
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> list)
         {
-            if (list == null)
-            {
-                return true;
-            }
-
-            if (!list.Any())
-            {
-                return true;
-            }
-
-            return false;
+            return !list?.Any() ?? true;
         }
 
         public static bool HasDuplicates<T, TProp>(this IEnumerable<T> list, Func<T, TProp> selector)

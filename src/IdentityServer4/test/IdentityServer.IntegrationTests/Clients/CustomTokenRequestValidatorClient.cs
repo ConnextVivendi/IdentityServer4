@@ -3,7 +3,9 @@
 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel.Client;
@@ -11,6 +13,7 @@ using IdentityServer.IntegrationTests.Clients.Setup;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
+
 
 namespace IdentityServer.IntegrationTests.Clients
 {
@@ -119,7 +122,8 @@ namespace IdentityServer.IntegrationTests.Clients
 
         private Dictionary<string, object> GetFields(TokenResponse response)
         {
-            return response.Json.ToObject<Dictionary<string, object>>();
+            var jObject = JsonObject.Create(response.Json);
+            return jObject!.AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => (object) kvp.Value.ToString());
         }
     }
 }

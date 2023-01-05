@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
@@ -24,7 +25,7 @@ namespace build
             public const string CopyPackOutput = "copy-pack-output";
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Target(Targets.CleanBuildOutput, () =>
             {
@@ -82,7 +83,7 @@ namespace build
 
             Target("sign", DependsOn(Targets.SignBinary, Targets.Test, Targets.SignPackage, Targets.CopyPackOutput));
 
-            RunTargetsAndExit(args, ex => ex is SimpleExec.NonZeroExitCodeException || ex.Message.EndsWith(envVarMissing), Prefix);
+            await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException || ex.Message.EndsWith(envVarMissing), ()=> Prefix);
         }
 
         private static void Sign(string path, string searchTerm)

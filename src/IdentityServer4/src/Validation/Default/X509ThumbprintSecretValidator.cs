@@ -49,7 +49,7 @@ namespace IdentityServer4.Validation
                 return fail;
             }
 
-            var thumbprintSecrets = secrets.Where(s => s.Type == SecretTypes.X509CertificateThumbprint);
+            var thumbprintSecrets = secrets.Where(s => s.Type == SecretTypes.X509CertificateThumbprint).ToList();
             if (!thumbprintSecrets.Any())
             {
                 _logger.LogDebug("No thumbprint secrets configured for client.");

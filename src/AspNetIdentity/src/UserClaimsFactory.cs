@@ -1,4 +1,4 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
@@ -49,14 +49,14 @@ namespace IdentityServer4.AspNetIdentity
 
             if (_userManager.SupportsUserEmail)
             {
-                var email = await _userManager.GetEmailAsync(user);
+                var email = identity.FindFirst(x => x.Type == JwtClaimTypes.Email)?.Value 
+                            ?? await _userManager.GetEmailAsync(user);
                 if (!String.IsNullOrWhiteSpace(email))
                 {
-                    identity.AddClaims(new[]
-                    {
+                    var emailConfimed = await _userManager.IsEmailConfirmedAsync(user) ? "true" : "false"; 
+                    identity.AddClaims(new[] {
                         new Claim(JwtClaimTypes.Email, email),
-                        new Claim(JwtClaimTypes.EmailVerified,
-                            await _userManager.IsEmailConfirmedAsync(user) ? "true" : "false", ClaimValueTypes.Boolean)
+                        new Claim(JwtClaimTypes.EmailVerified,emailConfimed, ClaimValueTypes.Boolean)
                     });
                 }
             }

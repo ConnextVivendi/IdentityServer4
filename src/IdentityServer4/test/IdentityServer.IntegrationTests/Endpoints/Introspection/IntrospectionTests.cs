@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel.Client;
@@ -14,7 +15,6 @@ using IdentityServer.IntegrationTests.Endpoints.Introspection.Setup;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace IdentityServer.IntegrationTests.Endpoints.Introspection
@@ -179,17 +179,15 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
 
                 Token = tokenResponse.AccessToken
             });
+            var values = JsonObject.Create(introspectionResponse.Json);
 
-            var values = introspectionResponse.Json.ToObject<Dictionary<string, object>>();
-
-            values["aud"].GetType().Name.Should().Be("String");
-            values["iss"].GetType().Name.Should().Be("String");
-            values["nbf"].GetType().Name.Should().Be("Int64");
-            values["exp"].GetType().Name.Should().Be("Int64");
-            values["client_id"].GetType().Name.Should().Be("String");
-            values["active"].GetType().Name.Should().Be("Boolean");
-            values["scope"].GetType().Name.Should().Be("String");
-
+            values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean");
+            values["scope"].GetValue<string>().GetType().Name.Should().Be("String");
             values["scope"].ToString().Should().Be("api1");
         }
 
@@ -219,19 +217,18 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
                 Token = tokenResponse.AccessToken
             });
 
-            var values = introspectionResponse.Json.ToObject<Dictionary<string, object>>();
+            var values = JsonObject.Create(introspectionResponse.Json);
 
-            values["aud"].GetType().Name.Should().Be("String");
-            values["iss"].GetType().Name.Should().Be("String");
-            values["nbf"].GetType().Name.Should().Be("Int64");
-            values["exp"].GetType().Name.Should().Be("Int64");
-            values["auth_time"].GetType().Name.Should().Be("Int64");
-            values["client_id"].GetType().Name.Should().Be("String");
-            values["sub"].GetType().Name.Should().Be("String");
-            values["active"].GetType().Name.Should().Be("Boolean");
-            values["scope"].GetType().Name.Should().Be("String");
-
-            values["scope"].ToString().Should().Be("api1");
+            values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["auth_time"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["sub"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean");
+            values["scope"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["scope"].GetValue<string>().Should().Be("api1");
         }
 
         [Fact]
@@ -258,24 +255,24 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
                 Token = tokenResponse.AccessToken
             });
 
-            var values = introspectionResponse.Json.ToObject<Dictionary<string, object>>();
+            var values = JsonObject.Create(introspectionResponse.Json);
 
-            values["aud"].GetType().Name.Should().Be("JArray");
+            values["aud"].AsArray().GetType().Name.Should().Be("JsonArray");
 
-            var audiences = ((JArray)values["aud"]);
+            var audiences = values["aud"].AsArray();
             foreach (var aud in audiences)
             {
-                aud.Type.Should().Be(JTokenType.String);
+                aud.GetValue<string>().GetType().Name.Should().Be("String");
             }
 
-            values["iss"].GetType().Name.Should().Be("String");
-            values["nbf"].GetType().Name.Should().Be("Int64");
-            values["exp"].GetType().Name.Should().Be("Int64");
-            values["client_id"].GetType().Name.Should().Be("String");
-            values["active"].GetType().Name.Should().Be("Boolean");
-            values["scope"].GetType().Name.Should().Be("String");
+            values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean");
+            values["scope"].GetValue<string>().GetType().Name.Should().Be("String");
 
-            var scopes = values["scope"].ToString();
+            var scopes = values["scope"].GetValue<string>();
             scopes.Should().Be("api3-a api3-b");
         }
 
@@ -302,17 +299,17 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
 
                 Token = tokenResponse.AccessToken
             });
+            
+            var values = JsonObject.Create(introspectionResponse.Json);
 
-            var values = introspectionResponse.Json.ToObject<Dictionary<string, object>>();
-
-            values["aud"].GetType().Name.Should().Be("String");
-            values["iss"].GetType().Name.Should().Be("String"); 
-            values["nbf"].GetType().Name.Should().Be("Int64"); 
-            values["exp"].GetType().Name.Should().Be("Int64"); 
-            values["client_id"].GetType().Name.Should().Be("String"); 
-            values["active"].GetType().Name.Should().Be("Boolean"); 
-            values["scope"].GetType().Name.Should().Be("String");
-
+            values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["iss"].GetValue<string>().GetType().Name.Should().Be("String"); 
+            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64"); 
+            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64"); 
+            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String"); 
+            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean"); 
+            values["scope"].GetValue<string>().GetType().Name.Should().Be("String");
             var scopes = values["scope"].ToString();
             scopes.Should().Be("api3-a api3-b");
         }

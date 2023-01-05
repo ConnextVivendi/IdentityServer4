@@ -49,7 +49,7 @@ namespace IdentityServer4.Validation
                 return fail;
             }
 
-            var nameSecrets = secrets.Where(s => s.Type == SecretTypes.X509CertificateName);
+            var nameSecrets = secrets.Where(s => s.Type == SecretTypes.X509CertificateName).ToList();
             if (!nameSecrets.Any())
             {
                 _logger.LogDebug("No x509 name secrets configured for client.");
