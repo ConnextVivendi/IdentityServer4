@@ -1,11 +1,11 @@
 <Project>
 
   <PropertyGroup>
-    <FrameworkVersion>6.0.*</FrameworkVersion>
-    <ExtensionsVersion>6.0.*</ExtensionsVersion>
-    <EntityFrameworkVersion>6.0.*</EntityFrameworkVersion>
+    <FrameworkVersion>7.0.0</FrameworkVersion>
+    <ExtensionsVersion>7.0.0</ExtensionsVersion>
+    <EntityFrameworkVersion>7.0.0</EntityFrameworkVersion>
     
-    <IdentityServerVersion>4.6.0-*</IdentityServerVersion>
+    <IdentityServerVersion>7.0.0-*</IdentityServerVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 
     <!--tests -->
-    <PackageReference Update="FluentAssertions" Version="6.8.0" />
+    <PackageReference Update="FluentAssertions" Version="6.9.0" />
     <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.0" />
     <PackageReference Update="xunit" Version="2.4.2" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.5" PrivateAssets="All" />
@@ -40,10 +40,10 @@
     
     <!--misc -->
     <PackageReference Update="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.25.1" />
-    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
-    <PackageReference Update="System.Security.Principal.Windows" Version="4.7.0" />
-    <PackageReference Update="AutoMapper" Version="[10.0.0,11.0)" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.26.0" />
+    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
+    <PackageReference Update="System.Security.Principal.Windows" Version="5.0.0" />
+    <PackageReference Update="AutoMapper" Version="12.0.0" />
     
     <!--microsoft asp.net core -->
     <PackageReference Update="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="$(FrameworkVersion)" />

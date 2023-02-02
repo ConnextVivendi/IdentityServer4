@@ -1,11 +1,11 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System.Linq;
 using FluentAssertions;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Models;
+using System.Linq;
 using Xunit;
 
 namespace IdentityServer4.EntityFramework.UnitTests.Mappers
@@ -15,7 +15,7 @@ namespace IdentityServer4.EntityFramework.UnitTests.Mappers
         [Fact]
         public void ScopeAutomapperConfigurationIsValid()
         {
-            ScopeMappers.Mapper.ConfigurationProvider.AssertConfigurationIsValid<ScopeMapperProfile>();
+            ScopeMappers.Mapper.ConfigurationProvider.AssertConfigurationIsValid();
         }
 
         [Fact]
