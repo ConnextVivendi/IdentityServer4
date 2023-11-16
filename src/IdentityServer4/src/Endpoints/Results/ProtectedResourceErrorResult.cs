@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System.Threading.Tasks;
+using IdentityModel;
 using IdentityServer4.Extensions;
-using Microsoft.Extensions.Primitives;
 using IdentityServer4.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using IdentityModel;
+using System.Threading.Tasks;
 
 namespace IdentityServer4.Endpoints.Results
 {
@@ -42,12 +42,12 @@ namespace IdentityServer4.Endpoints.Results
             var errorString = string.Format($"error=\"{Error}\"");
             if (ErrorDescription.IsMissing())
             {
-                context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString }).ToString());
+                context.Response.Headers.Append(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString }).ToString());
             }
             else
             {
                 var errorDescriptionString = string.Format($"error_description=\"{ErrorDescription}\"");
-                context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString, errorDescriptionString }).ToString());
+                context.Response.Headers.Append(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString, errorDescriptionString }).ToString());
             }
 
             return Task.CompletedTask;

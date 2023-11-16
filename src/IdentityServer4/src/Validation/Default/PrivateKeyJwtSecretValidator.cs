@@ -2,17 +2,17 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace IdentityServer4.Validation
 {
@@ -26,7 +26,7 @@ namespace IdentityServer4.Validation
         private readonly ILogger _logger;
 
         private const string Purpose = nameof(PrivateKeyJwtSecretValidator);
-        
+
         /// <summary>
         /// Instantiates an instance of private_key_jwt secret validator
         /// </summary>
@@ -88,7 +88,7 @@ namespace IdentityServer4.Validation
                 string.Concat(_contextAccessor.HttpContext.GetIdentityServerIssuerUri().EnsureTrailingSlash(),
                     Constants.ProtocolRoutePaths.Token)
             };
-            
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 IssuerSigningKeys = trustedKeys,
@@ -102,7 +102,7 @@ namespace IdentityServer4.Validation
 
                 RequireSignedTokens = true,
                 RequireExpirationTime = true,
-                
+
                 ClockSkew = TimeSpan.FromMinutes(5)
             };
             try
@@ -110,20 +110,20 @@ namespace IdentityServer4.Validation
                 var handler = new JwtSecurityTokenHandler();
                 handler.ValidateToken(jwtTokenString, tokenValidationParameters, out var token);
 
-                var jwtToken = (JwtSecurityToken)token;
+                var jwtToken = (JwtSecurityToken) token;
                 if (jwtToken.Subject != jwtToken.Issuer)
                 {
                     _logger.LogError("Both 'sub' and 'iss' in the client assertion token must have a value of client_id.");
                     return fail;
                 }
-                
-                var exp = jwtToken.Payload.Exp;
+
+                var exp = jwtToken.Payload.Expiration;
                 if (!exp.HasValue)
                 {
                     _logger.LogError("exp is missing.");
                     return fail;
                 }
-                
+
                 var jti = jwtToken.Payload.Jti;
                 if (jti.IsMissing())
                 {

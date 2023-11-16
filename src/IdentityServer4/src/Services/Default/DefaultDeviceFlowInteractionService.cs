@@ -80,7 +80,7 @@ namespace IdentityServer4.Services
             if (consent.RememberConsent)
             {
                 //var consentRequest = new ConsentRequest(request, subject);
-                //await _consentMessageStore.WriteAsync(consentRequest.Id, new Message<ConsentResponse>(consent, _clock.UtcNow.UtcDateTime));
+                //await _consentMessageStore.WriteAsync(consentRequest.Id, new Message<ConsentResponse>(consent, _clock.GetUtcNow().UtcDateTime));
             }
 
             await _devices.UpdateByUserCodeAsync(userCode, deviceAuth);
