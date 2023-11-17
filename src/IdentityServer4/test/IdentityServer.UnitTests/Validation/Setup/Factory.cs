@@ -2,10 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using IdentityServer.UnitTests.Common;
 using IdentityServer4.Configuration;
 using IdentityServer4.Models;
@@ -14,8 +10,11 @@ using IdentityServer4.Services.Default;
 using IdentityServer4.Stores;
 using IdentityServer4.Stores.Serialization;
 using IdentityServer4.Validation;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 
 namespace IdentityServer.UnitTests.Validation.Setup
 {
@@ -59,7 +58,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
             {
                 profile = new TestProfileService();
             }
-            
+
             if (deviceCodeValidator == null)
             {
                 deviceCodeValidator = new TestDeviceCodeValidator();
@@ -94,7 +93,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
             {
                 resourceValidator = CreateResourceValidator(resourceStore);
             }
-            
+
             if (tokenValidator == null)
             {
                 tokenValidator = CreateTokenValidator(refreshTokenStore: refreshTokenStore, profile: profile);
@@ -119,8 +118,8 @@ namespace IdentityServer.UnitTests.Validation.Setup
                 resourceStore,
                 tokenValidator,
                 refreshTokenService,
-                new TestEventService(), 
-                new StubClock(), 
+                new TestEventService(),
+                new StubClock(),
                 TestLogger.Create<TokenRequestValidator>());
         }
 
@@ -160,7 +159,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
             {
                 options = TestIdentityServerOptions.Create();
             }
-            
+
             if (resourceStore == null)
             {
                 resourceStore = new InMemoryResourcesStore(TestScopes.GetIdentity(), TestScopes.GetApis(), TestScopes.GetScopes());
@@ -245,10 +244,10 @@ namespace IdentityServer.UnitTests.Validation.Setup
         }
 
         public static TokenValidator CreateTokenValidator(
-            IReferenceTokenStore store = null, 
+            IReferenceTokenStore store = null,
             IRefreshTokenStore refreshTokenStore = null,
-            IProfileService profile = null, 
-            IdentityServerOptions options = null, ISystemClock clock = null)
+            IProfileService profile = null,
+            IdentityServerOptions options = null, TimeProvider clock = null)
         {
             if (options == null)
             {
@@ -301,12 +300,12 @@ namespace IdentityServer.UnitTests.Validation.Setup
             IDeviceFlowCodeService service,
             IProfileService profile = null,
             IDeviceFlowThrottlingService throttlingService = null,
-            ISystemClock clock = null)
+            TimeProvider clock = null)
         {
             profile = profile ?? new TestProfileService();
             throttlingService = throttlingService ?? new TestDeviceFlowThrottlingService();
             clock = clock ?? new StubClock();
-            
+
             var validator = new DeviceCodeValidator(service, profile, throttlingService, clock, TestLogger.Create<DeviceCodeValidator>());
 
             return validator;
@@ -350,7 +349,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
                 new DefaultHandleGenerationService(),
                 TestLogger.Create<DefaultAuthorizationCodeStore>());
         }
-        
+
         public static IRefreshTokenStore CreateRefreshTokenStore()
         {
             return new DefaultRefreshTokenStore(new InMemoryPersistedGrantStore(),
@@ -358,7 +357,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
                 new DefaultHandleGenerationService(),
                 TestLogger.Create<DefaultRefreshTokenStore>());
         }
-        
+
         public static IReferenceTokenStore CreateReferenceTokenStore()
         {
             return new DefaultReferenceTokenStore(new InMemoryPersistedGrantStore(),
@@ -371,7 +370,7 @@ namespace IdentityServer.UnitTests.Validation.Setup
         {
             return new DefaultDeviceFlowCodeService(new InMemoryDeviceFlowStore(), new DefaultHandleGenerationService());
         }
-        
+
         public static IUserConsentStore CreateUserConsentStore()
         {
             return new DefaultUserConsentStore(new InMemoryPersistedGrantStore(),

@@ -2,10 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel;
 using IdentityServer.UnitTests.Common;
@@ -13,6 +9,10 @@ using IdentityServer4;
 using IdentityServer4.Configuration;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponseGenerator
@@ -72,12 +72,13 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
             var request = new ValidatedAuthorizeRequest
             {
                 ClientId = "foo",
-                Subject = new IdentityServerUser("123") {
+                Subject = new IdentityServerUser("123")
+                {
                     IdentityProvider = IdentityServerConstants.LocalIdentityProvider
                 }.CreatePrincipal(),
-                Client = new Client 
+                Client = new Client
                 {
-                    IdentityProviderRestrictions = new List<string> 
+                    IdentityProviderRestrictions = new List<string>
                     {
                         IdentityServerConstants.LocalIdentityProvider
                     }
@@ -102,7 +103,7 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
                 Client = new Client
                 {
                     EnableLocalLogin = false,
-                    IdentityProviderRestrictions = new List<string> 
+                    IdentityProviderRestrictions = new List<string>
                     {
                         "some_idp"
                     }
@@ -121,7 +122,7 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
             {
                 ClientId = "foo",
                 Client = new Client(),
-                 AuthenticationContextReferenceClasses = new List<string>{
+                AuthenticationContextReferenceClasses = new List<string>{
                     "idp:" + IdentityServerConstants.LocalIdentityProvider
                 },
                 Subject = new IdentityServerUser("123")
@@ -162,13 +163,14 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
             var request = new ValidatedAuthorizeRequest
             {
                 ClientId = "foo",
-                Client = new Client() {
+                Client = new Client()
+                {
                     UserSsoLifetime = 3600 // 1h
                 },
                 Subject = new IdentityServerUser("123")
                 {
                     IdentityProvider = "local",
-                    AuthenticationTime = _clock.UtcNow.UtcDateTime.Subtract(TimeSpan.FromSeconds(10))
+                    AuthenticationTime = _clock.GetUtcNow().UtcDateTime.Subtract(TimeSpan.FromSeconds(10))
                 }.CreatePrincipal()
             };
 
@@ -190,7 +192,7 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
                 Subject = new IdentityServerUser("123")
                 {
                     IdentityProvider = "local",
-                    AuthenticationTime = _clock.UtcNow.UtcDateTime.Subtract(TimeSpan.FromSeconds(3700))
+                    AuthenticationTime = _clock.GetUtcNow().UtcDateTime.Subtract(TimeSpan.FromSeconds(3700))
                 }.CreatePrincipal()
             };
 
