@@ -151,6 +151,30 @@ namespace IdentityServer4.Extensions
                 return false;
             }
 
+            if (!Uri.TryCreate(url, UriKind.Relative, out var uri))
+            {
+                // an absolute uri is never local
+                return false;
+            }
+
+            // A relative uri can be scheme-relative, in which case the host is still given (e.g. "//google.com").
+            // These uris must not be treated as local.
+            // Since the host cannot directly be read from a Uri with UriKind.Relative, we resolve it against two arbitrary absolute uris
+            // that differ in the host only.
+            // If the resulting absolute uris are different, then there cannot have been a host present in the relative uri,
+            // since it would have replaced the host of the base uri in both cases.
+            var baseUri1 = new Uri("https://www.example.com");
+            var baseUri2 = new Uri("https://example.com");
+
+            var absoluteUri1 = new Uri(baseUri1, uri);
+            var absoluteUri2 = new Uri(baseUri2, uri);
+
+            return absoluteUri1 != absoluteUri2;
+
+            //var result = Uri.TryCreate(url, UriKind.Relative, out var uri);
+
+            //return result && string.IsNullOrEmpty(uri.Host);
+
             // Allows "/" or "/foo" but not "//" or "/\".
             if (url[0] == '/')
             {
@@ -239,7 +263,7 @@ namespace IdentityServer4.Extensions
                 }
             }
 
-            return new NameValueCollection();           
+            return new NameValueCollection();
         }
 
         public static string GetOrigin(this string url)
@@ -264,7 +288,7 @@ namespace IdentityServer4.Extensions
 
             return null;
         }
-        
+
         public static string Obfuscate(this string value)
         {
             var last4Chars = "****";

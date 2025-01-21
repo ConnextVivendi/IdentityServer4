@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Extensions;
+using FluentAssertions;
+using IdentityServer4.Extensions;
 using Xunit;
 
 namespace IdentityServer.UnitTests.Extensions
@@ -86,6 +87,28 @@ namespace IdentityServer.UnitTests.Extensions
             CheckOrigin("test://localhost:8080/", null);
             CheckOrigin("test://localhost:8080/test", null);
             CheckOrigin("test://localhost:8080/test/resource", null);
+        }
+
+        [Theory]
+        [InlineData("authorize")]
+        [InlineData("/authorize")]
+        [InlineData("../authorize")]
+        [InlineData("~/authorize")]
+        public void IsLocalUrl_PassesForLocalUrls(string url)
+        {
+            var result = url.IsLocalUrl();
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("http://example.com/authorize/callback")]
+        [InlineData("//example.com/authorize/callback")]
+        public void IsLocalUrl_FailsForNonLocalUrls(string url)
+        {
+            var result = url.IsLocalUrl();
+
+            result.Should().BeFalse();
         }
     }
 }
