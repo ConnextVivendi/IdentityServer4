@@ -2,16 +2,16 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel.Client;
 using IdentityServer.IntegrationTests.Clients.Setup;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Xunit;
 
 
@@ -122,7 +122,7 @@ namespace IdentityServer.IntegrationTests.Clients
 
         private Dictionary<string, object> GetFields(TokenResponse response)
         {
-            var jObject = JsonObject.Create(response.Json);
+            var jObject = JsonObject.Create(response.Json.Value);
             return jObject!.AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => (object) kvp.Value.ToString());
         }
     }

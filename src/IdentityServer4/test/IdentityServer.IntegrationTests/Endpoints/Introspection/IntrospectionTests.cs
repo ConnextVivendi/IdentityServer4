@@ -2,6 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using FluentAssertions;
+using IdentityModel.Client;
+using IdentityServer.IntegrationTests.Endpoints.Introspection.Setup;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,12 +15,6 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using FluentAssertions;
-using IdentityModel.Client;
-using IdentityServer.IntegrationTests.Endpoints.Introspection.Setup;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace IdentityServer.IntegrationTests.Endpoints.Introspection
@@ -179,7 +179,7 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
 
                 Token = tokenResponse.AccessToken
             });
-            var values = JsonObject.Create(introspectionResponse.Json);
+            var values = JsonObject.Create(introspectionResponse.Json.Value);
 
             values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
             values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
@@ -217,7 +217,7 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
                 Token = tokenResponse.AccessToken
             });
 
-            var values = JsonObject.Create(introspectionResponse.Json);
+            var values = JsonObject.Create(introspectionResponse.Json.Value);
 
             values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
             values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
@@ -255,7 +255,7 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
                 Token = tokenResponse.AccessToken
             });
 
-            var values = JsonObject.Create(introspectionResponse.Json);
+            var values = JsonObject.Create(introspectionResponse.Json.Value);
 
             values["aud"].AsArray().GetType().Name.Should().Be("JsonArray");
 
@@ -299,16 +299,16 @@ namespace IdentityServer.IntegrationTests.Endpoints.Introspection
 
                 Token = tokenResponse.AccessToken
             });
-            
-            var values = JsonObject.Create(introspectionResponse.Json);
+
+            var values = JsonObject.Create(introspectionResponse.Json.Value);
 
             values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
             values["aud"].GetValue<string>().GetType().Name.Should().Be("String");
-            values["iss"].GetValue<string>().GetType().Name.Should().Be("String"); 
-            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64"); 
-            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64"); 
-            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String"); 
-            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean"); 
+            values["iss"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["nbf"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["exp"].GetValue<long>().GetType().Name.Should().Be("Int64");
+            values["client_id"].GetValue<string>().GetType().Name.Should().Be("String");
+            values["active"].GetValue<bool>().GetType().Name.Should().Be("Boolean");
             values["scope"].GetValue<string>().GetType().Name.Should().Be("String");
             var scopes = values["scope"].ToString();
             scopes.Should().Be("api3-a api3-b");

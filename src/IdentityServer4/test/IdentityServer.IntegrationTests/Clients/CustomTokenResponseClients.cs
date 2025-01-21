@@ -2,14 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel;
 using IdentityModel.Client;
@@ -18,6 +10,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IdentityServer.IntegrationTests.Clients
@@ -54,7 +54,7 @@ namespace IdentityServer.IntegrationTests.Clients
             // raw fields
             var fields = GetFields(response);
             fields.Should().Contain("string_value", "some_string");
-            ((Int64)fields["int_value"]).Should().Be(42);
+            ((Int64) fields["int_value"]).Should().Be(42);
 
             object temp;
             fields.TryGetValue("identity_token", out temp).Should().BeFalse();
@@ -82,7 +82,7 @@ namespace IdentityServer.IntegrationTests.Clients
             response.TokenType.Should().Be("Bearer");
             response.IdentityToken.Should().BeNull();
             response.RefreshToken.Should().BeNull();
-            
+
 
             // token content
             var payload = GetPayload(response);
@@ -119,7 +119,7 @@ namespace IdentityServer.IntegrationTests.Clients
             // raw fields
             var fields = GetFields(response);
             fields.Should().Contain("string_value", "some_string");
-            ((Int64)fields["int_value"]).Should().Be(42);
+            ((Int64) fields["int_value"]).Should().Be(42);
 
             object temp;
             fields.TryGetValue("identity_token", out temp).Should().BeFalse();
@@ -173,7 +173,7 @@ namespace IdentityServer.IntegrationTests.Clients
             // raw fields
             var fields = GetFields(response);
             fields.Should().Contain("string_value", "some_string");
-            ((Int64)fields["int_value"]).Should().Be(42);
+            ((Int64) fields["int_value"]).Should().Be(42);
 
             object temp;
             fields.TryGetValue("identity_token", out temp).Should().BeFalse();
@@ -244,7 +244,7 @@ namespace IdentityServer.IntegrationTests.Clients
             // raw fields
             var fields = GetFields(response);
             fields.Should().Contain("string_value", "some_string");
-            ((Int64)fields["int_value"]).Should().Be(42);
+            ((Int64) fields["int_value"]).Should().Be(42);
 
             object temp;
             fields.TryGetValue("identity_token", out temp).Should().BeFalse();
@@ -283,7 +283,7 @@ namespace IdentityServer.IntegrationTests.Clients
 
         private Dictionary<string, object> GetFields(TokenResponse response)
         {
-            var jObject = JsonObject.Create(response.Json);
+            var jObject = JsonObject.Create(response.Json.Value);
             return jObject!.AsEnumerable().ToDictionary(kvp => kvp.Key, kvp => (object) GetValue(kvp.Value));
         }
 
@@ -312,7 +312,7 @@ namespace IdentityServer.IntegrationTests.Clients
 
             return null;
         }
-        
+
         private Dictionary<string, object> GetPayload(TokenResponse response)
         {
             var token = response.AccessToken.Split('.').Skip(1).Take(1).First();

@@ -2,20 +2,20 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityModel;
 using IdentityModel.Client;
 using IdentityServer.IntegrationTests.Clients.Setup;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace IdentityServer.IntegrationTests.Clients
@@ -172,7 +172,7 @@ namespace IdentityServer.IntegrationTests.Clients
             });
 
             response.IsError.Should().BeFalse();
-            
+
             var payload = GetPayload(response);
 
             var scopes = JsonArray.Create((JsonElement) payload["scope"]).Select(x => x.ToString()).ToArray();
@@ -193,7 +193,7 @@ namespace IdentityServer.IntegrationTests.Clients
                 Address = UserInfoEndpoint,
                 Token = response.AccessToken
             });
-            var jsonObject = JsonObject.Create(userInfo.Json);
+            var jsonObject = JsonObject.Create(userInfo.Json.Value);
             roles = jsonObject["role"].AsArray().Select(x => x.ToString()).ToArray();
             roles.Length.Should().Be(2);
             roles.Should().Contain("Geek");
