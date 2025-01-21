@@ -2,7 +2,7 @@
   
   <PropertyGroup>
     <PackageId>IdentityServer4</PackageId>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Description>OpenID Connect and OAuth 2.0 Framework for ASP.NET Core</Description>
     <Authors>Brock Allen;Dominick Baier</Authors>
     <AssemblyName>IdentityServer4</AssemblyName>
@@ -46,6 +46,10 @@
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
 
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="MinVer" />
   </ItemGroup>
 </Project>
