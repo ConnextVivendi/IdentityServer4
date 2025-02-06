@@ -110,5 +110,18 @@ namespace IdentityServer.UnitTests.Extensions
 
             result.Should().BeFalse();
         }
+
+        [Theory]
+        [InlineData(" authorize")]
+        [InlineData("/\nauthorize")]
+        [InlineData("\rexample.com/authorize/callback")]
+        [InlineData("/\texample.com/authorize/callback")]
+        [InlineData("/ \r\n\t /example.com/authorize/callback")]
+        public void IsLocalUrl_FailsForUnescapedUrls(string url)
+        {
+            var result = url.IsLocalUrl();
+
+            result.Should().BeFalse();
+        }
     }
 }

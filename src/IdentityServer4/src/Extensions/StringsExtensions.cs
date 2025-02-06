@@ -157,6 +157,11 @@ namespace IdentityServer4.Extensions
                 return false;
             }
 
+            if (!uri.IsWellFormedOriginalString())
+            {
+                return false;
+            }
+
             // A relative uri can be scheme-relative, in which case the host is still given (e.g. "//google.com").
             // These uris must not be treated as local.
             // Since the host cannot directly be read from a Uri with UriKind.Relative, we resolve it against two arbitrary absolute uris
@@ -170,48 +175,6 @@ namespace IdentityServer4.Extensions
             var absoluteUri2 = new Uri(baseUri2, uri);
 
             return absoluteUri1 != absoluteUri2;
-
-            //var result = Uri.TryCreate(url, UriKind.Relative, out var uri);
-
-            //return result && string.IsNullOrEmpty(uri.Host);
-
-            // Allows "/" or "/foo" but not "//" or "/\".
-            if (url[0] == '/')
-            {
-                // url is exactly "/"
-                if (url.Length == 1)
-                {
-                    return true;
-                }
-
-                // url doesn't start with "//" or "/\"
-                if (url[1] != '/' && url[1] != '\\')
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            // Allows "~/" or "~/foo" but not "~//" or "~/\".
-            if (url[0] == '~' && url.Length > 1 && url[1] == '/')
-            {
-                // url is exactly "~/"
-                if (url.Length == 2)
-                {
-                    return true;
-                }
-
-                // url doesn't start with "~//" or "~/\"
-                if (url[2] != '/' && url[2] != '\\')
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
         }
 
         [DebuggerStepThrough]
